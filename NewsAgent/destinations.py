@@ -25,13 +25,18 @@ class PlainDestination(DestinationBase):
             if " " in item.body:
                 print('-' * len(item.title))
                 print(item.body)
+                print("From:", item.source)
 
 class TextFileDestination(DestinationBase):
+    """
+    A news Destination that formats items into a .txt file.
+    """
     def __init__(self, filename):
         self.filename = filename
     def receive_items(self, items):
         f = open(self.filename, "w", encoding="utf-8")
         for i in items:
+            f.write("From: "+i.source+"\n")
             f.write(i.title+"\n")
             if not " " in i.body:
                 f.write("\n")
@@ -73,6 +78,7 @@ class HTMLDestination(DestinationBase):
             id += 1
             print('<h2><a name="{}">{}</a></h2>'
                     .format(id, item.title), file=out)
+            print("<h6>From: {}</h6>".format(item.source), file=out)
             if " " in item.body:
                 print('<pre>{}</pre>'.format(LINK_REGEX.sub(link_htmlize, item.body)), file=out)
             print("<br />", file=out)
@@ -100,5 +106,3 @@ class XMLDestination(DestinationBase):
             f.write("<body>"+i.body+"</body>\n")
         f.write("</news>")
         f.close()
-
-
