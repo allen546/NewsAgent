@@ -29,7 +29,7 @@ class NNTPSource(SourceBase):
             resp, info = server.body(id)
             body = '\n'.join(line.decode('latin1')
                              for line in info.lines) + '\n\n'
-            yield NewsItem(title, body)
+            yield NewsItem(title, body, "NNTP NewsGroup "+self.group)
         server.quit()
 
 class SimpleWebSource(SourceBase):
@@ -49,6 +49,6 @@ class SimpleWebSource(SourceBase):
             titles = self.title_pattern.findall(text)
             bodies = self.body_pattern.findall(text)
             for title, body in zip(titles, bodies):
-                yield NewsItem(title, textwrap.fill(body) + '\n')
+                yield NewsItem(title, textwrap.fill(body) + '\n', "WebPage "+self.url)
         except:
             return []
