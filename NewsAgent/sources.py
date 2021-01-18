@@ -1,6 +1,7 @@
 from nntplib import NNTP, decode_header
 from urllib.request import urlopen
-import textwrap
+from urllib.parse import urljoin
+import textwrap, bs4
 try:
     from .newsitems import *
 except:
@@ -38,23 +39,16 @@ class NNTPSource(SourceBase):
             except: continue
         return []
 
-class SimpleWebSource(SourceBase):
-    """
-    A news source that extracts news items from a web page using regular
-    expressions.
-    """
-    def __init__(self, url, title_pattern, body_pattern, encoding='utf8'):
-        self.url = url
-        self.title_pattern = re.compile(title_pattern)
-        self.body_pattern = re.compile(body_pattern)
-        self.encoding = encoding
-
+class FoxNewsSource(SourceBase):
+    def __init__(self, n=10):
+        self.n=n
     def get_items(self):
-        try:
-            text = urlopen(self.url).read().decode(self.encoding)
-            titles = self.title_pattern.findall(text)
-            bodies = self.body_pattern.findall(text)
-            for title, body in zip(titles, bodies):
-                yield NewsItem(title, textwrap.fill(body) + '\n', "WebPage "+self.url)
-        except:
-            return []
+        r = urlopen("https://www.foxnews.com/")
+        resp = r.read()
+        b = bs4.BeautifulSoup(markup=resp, features="html.parser")
+        matches = b.select("h2[class='title'] > a[href]")[:self.n]
+        h = {}
+        for match in matches:
+            h[match.text]=match.get("href")
+        for match in h:
+            yield NewsItem(match, "Link: {}".format("https:"+h[match]), "Fox News")

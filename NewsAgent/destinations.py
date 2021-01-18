@@ -1,4 +1,4 @@
-import re
+import re, urllib.parse
 
 try:
     from .newsitems import *
@@ -65,13 +65,13 @@ class HTMLDestination(DestinationBase):
 <h1>Today's News</h1>
         """, file=out)
 
-        print('<ul>', file=out)
+        print('<ol>', file=out)
         id = 0
         for item in items:
             id += 1
             print('  <li><a href="#{}">{}</a></li>'
                     .format(id, item.title), file=out)
-        print('</ul>', file=out)
+        print('</ol>', file=out)
 
         id = 0
         for item in items:
@@ -80,7 +80,11 @@ class HTMLDestination(DestinationBase):
                     .format(id, item.title), file=out)
             print("<h6>From: {}</h6>".format(item.source), file=out)
             if " " in item.body:
-                print('<pre>{}</pre>'.format(LINK_REGEX.sub(link_htmlize, item.body)), file=out)
+                if item.body.startswith("Link: "):
+                    print('<pre>{}</pre>'
+                          .format(LINK_REGEX.sub(link_htmlize, item.body)), file=out)
+                else:
+                    print('<pre>{}</pre>'.format(LINK_REGEX.sub(link_htmlize, item.body)), file=out)
             print("<br />", file=out)
 
         print("""
