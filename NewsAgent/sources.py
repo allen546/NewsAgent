@@ -13,6 +13,10 @@ class SourceBase:
     def get_items(self):
         pass
 
+class WebSource(SourceBase):
+    def __init__(self, n=10):
+        self.n = n
+
 class NNTPSource(SourceBase):
     """
     A news source that retrieves news items from an NNTP group.
@@ -39,9 +43,7 @@ class NNTPSource(SourceBase):
             except: continue
         return []
 
-class FoxNewsSource(SourceBase):
-    def __init__(self, n=10):
-        self.n=n
+class FoxNewsSource(WebSource):
     def get_items(self):
         r = urlopen("https://www.foxnews.com/")
         resp = r.read()
@@ -52,3 +54,4 @@ class FoxNewsSource(SourceBase):
             h[match.text]=match.get("href")
         for match in h:
             yield NewsItem(match, "Link: {}".format("https:"+h[match]), "Fox News")
+
