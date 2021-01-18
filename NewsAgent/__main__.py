@@ -29,9 +29,11 @@ if args.plain:
 if args.xml:
     agent.addDestination(XMLDestination(str(datetime.now())[0:10]+"-news.xml"))
 
-agent.add_source(NNTPSource("freenews.netfront.net", "comp.lang.python.announce", 5))
-agent.add_source(NNTPSource("freenews.netfront.net", "aus.politics", 5))
-agent.add_source(NNTPSource("freenews.netfront.net", "comp.lang.python", 5))
+agent.add_source(NNTPSource("comp.lang.python.announce", 5))
+agent.add_source(NNTPSource("aus.politics", 5))
+agent.add_source(NNTPSource("comp.lang.python", 5))
+agent.add_source(NNTPSource("alt.math", 5))
+agent.add_source(NNTPSource("alt.physics", 5))
 
 print("Distributing...")
 
