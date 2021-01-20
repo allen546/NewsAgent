@@ -11,6 +11,7 @@ def parse_args():
     p.add_argument("--html", help="Output to HTML File", action="store_true")
     p.add_argument("-p", "--plain", help="Output to Screen", action="store_true")
     p.add_argument("-x", "--xml", help="Output to XML File", action="store_true")
+    p.add_argument("-j", "--json", help="Output to JSON File", action="store_true")
     args = p.parse_args()
     return args
 
@@ -28,6 +29,9 @@ if args.plain:
 
 if args.xml:
     agent.addDestination(XMLDestination(str(datetime.now())[0:10]+"-news.xml"))
+
+if args.json:
+    agent.addDestination(JSONDestination(str(datetime.now())[0:10]+"-news.json"))
 
 agent.add_source(NNTPSource("comp.lang.python.announce", 5))
 agent.add_source(NNTPSource("aus.politics", 5))

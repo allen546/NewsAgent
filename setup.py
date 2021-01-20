@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="NewsAgent",
-    version="1.9",
+    version="1.10",
     author="Allen",
     author_email="allen.haha@hotmail.com",
     description="A News Agent",

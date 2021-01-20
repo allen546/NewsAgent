@@ -12,6 +12,8 @@ def link_htmlize(match):
     return '<a href="z">z</a>'.replace("z", link)
 
 class DestinationBase:
+    def __init__(self, filename):
+        self.filename = filename
     def receive_items(self, items):
         pass
 
@@ -19,6 +21,8 @@ class PlainDestination(DestinationBase):
     """
     A news destination that formats all its news items as plain text.
     """
+    def __init__(self):
+        pass
     def receive_items(self, items):
         for item in items:
             print(item.title)
@@ -31,8 +35,6 @@ class TextFileDestination(DestinationBase):
     """
     A news Destination that formats items into a .txt file.
     """
-    def __init__(self, filename):
-        self.filename = filename
     def receive_items(self, items):
         f = open(self.filename, "w", encoding="utf-8")
         for i in items:
@@ -48,9 +50,6 @@ class HTMLDestination(DestinationBase):
     """
     A news destination that formats all its news items as HTML.
     """
-    def __init__(self, filename):
-        self.filename = filename
-
     def receive_items(self, items):
 
         out = open(self.filename, 'w', encoding="utf-8")
@@ -95,8 +94,9 @@ class HTMLDestination(DestinationBase):
         out.close()
 
 class XMLDestination(DestinationBase):
-    def __init__(self, filename):
-        self.filename = filename
+    """
+    Output in XML Format.
+    """
     def receive_items(self, items):
         f = open(self.filename, "w", encoding="utf-8")
         f.write("<?xml version='1.0' encoding='utf-8'?>\n")
@@ -110,3 +110,28 @@ class XMLDestination(DestinationBase):
             f.write("<body>"+i.body+"</body>\n")
         f.write("</news>")
         f.close()
+
+class JSONDestination(DestinationBase):
+    """
+    
+    Output in JSON Format.
+    """
+    def receive_items(self, items):
+        f = open(self.filename, "w", encoding="utf-8")
+        tab = " "*4
+        f.write("[{}\n".format(tab))
+        i = 0
+        for item in items:
+            i += 1
+            f.write(tab+"{\n")
+            f.write(tab*2+'"id":{},\n'.format(i))
+            f.write(tab*2+'"title":{},'.format(repr(item.title))+"\n")
+            f.write(tab*2+'"body":{},'.format(repr(item.body))+"\n")
+            f.write(tab*2+'"origin":{}'.format(repr(item.source))+"\n")
+            if i == len(items):
+                f.write(tab+"}\n")
+                break
+            f.write(tab+"},\n")
+        f.write("]")
+        f.close()
+
