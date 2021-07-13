@@ -58,9 +58,22 @@ class HTMLDestination(DestinationBase):
 <head>
 <meta charset="utf-8" />
 <title>Today's News</title>
+<style>
+  h1 {
+      font-size:70px;
+  }
+  h2 {
+      font-size:35px;
+  }
+  h6 {
+      font-size:15px
+  }
+  pre {
+      font-size:15px
+  }
+</style>
 </head>
 <body>
-<center>
 <h1>Today's News</h1>
         """, file=out)
 
@@ -87,7 +100,6 @@ class HTMLDestination(DestinationBase):
             print("<br />", file=out)
 
         print("""
-</center>
 </body>
 </html>
         """, file=out)

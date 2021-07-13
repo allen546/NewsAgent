@@ -7,7 +7,7 @@ except:
 
 def parse_args():
     p = argparse.ArgumentParser(prog="NewsAgent", description="News Agent")
-    p.add_argument("-t", "--text-file", help="Output to Text file", action="store_true")
+    p.add_argument("-t", "--text-file", "--text", help="Output to Text file", action="store_true")
     p.add_argument("--html", help="Output to HTML File", action="store_true")
     p.add_argument("-p", "--plain", help="Output to Screen", action="store_true")
     p.add_argument("-x", "--xml", help="Output to XML File", action="store_true")

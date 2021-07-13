@@ -1,7 +1,7 @@
 from nntplib import NNTP, decode_header
 from urllib.request import urlopen
 from urllib.parse import urljoin
-import textwrap, bs4
+import textwrap, bs4, abc
 try:
     from .newsitems import *
 except:
@@ -9,12 +9,13 @@ except:
     
 KNOWN_NNTP_SERVERS = ["secure.news.easynews.com", "freenews.netfront.net", "news.easynews.com"]
 
-class SourceBase:
+class SourceBase(abc.ABC):
+    @abc.abstractmethod
     def get_items(self):
         pass
 
 class WebSource(SourceBase):
-    def __init__(self, n=10):
+    def __init__(self, n=5):
         self.n = n
 
 class NNTPSource(SourceBase):
@@ -53,5 +54,8 @@ class FoxNewsSource(WebSource):
         for match in matches:
             h[match.text]=match.get("href")
         for match in h:
+            self.n -= 1
             yield NewsItem(match, "Link: {}".format("https:"+h[match]), "Fox News")
+            if self.n == 0:
+                return
 
