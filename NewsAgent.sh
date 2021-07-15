@@ -1,1 +1,1 @@
-python3 -m NewsAgent --html -t
+python3 -m NewsAgent.example --html -t

@@ -1,4 +1,4 @@
-import re, urllib.parse
+import re, urllib.parse, abc
 
 try:
     from .newsitems import *
@@ -11,9 +11,10 @@ def link_htmlize(match):
     link = match.group()
     return '<a href="z">z</a>'.replace("z", link)
 
-class DestinationBase:
+class DestinationBase(abc.ABC):
     def __init__(self, filename):
         self.filename = filename
+    @abc.abstractmethod
     def receive_items(self, items):
         pass
 
