@@ -56,7 +56,9 @@ class FoxNewsSource(WebSourceBase):
         r = urlopen("https://www.foxnews.com/")
         resp = r.read()
         b = bs4.BeautifulSoup(markup=resp, features="html.parser")
-        matches = b.select("h2[class='title'] > a[href]")[:self.n]
+        try:
+            matches = b.select("h2[class='title'] > a[href]")[:self.n]
+        except: return []
         h = {}
         for match in matches:
             h[match.text]=match.get("href")
@@ -72,12 +74,13 @@ class SinaNewsSource(WebSourceBase):
         h = {}
         for match in matches:
             h[match.text]=match.get("href")
-            if not h[match.text].startswith("https://"):
-                h[match.text] = "https:"+match.get("href")
-
-            rb = urlopen(h[match.text]).read()
-            bs = bs4.BeautifulSoup(markup=rb, features="html.parser")
-            matches2 = bs.select("div[class='article']")[0]
+            rb = urlopen(h[match.text].strip()).read()
+            try:   
+                bs = bs4.BeautifulSoup(markup=rb, features="html.parser")
+                matches2 = bs.select("div[class='article']")[0]
+            except:
+                yield NewsItem(match.text, "Link: {}".format(h[match.text]), "Sina News")
+                continue
             text = "\n".join(m.text for m in matches2.select("p"))
             n = 0
             temp= ""
