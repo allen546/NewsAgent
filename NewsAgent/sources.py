@@ -35,20 +35,25 @@ class NNTPSource(SourceBase):
                     server = NNTP_SSL(servername)
                 except:
                     server = NNTP(servername)
+                print("nntp established")
                 resp, count, first, last, name = server.group(self.group)
                 start = last - self.howmany + 1
+                print("looking for articles")
                 resp, overviews = server.over((start, last))
                 for id, over in overviews:
-                    title = decode_header(over['subject'])
-                    resp, info = server.body(id)
-                    body = '\n'.join(line.decode('utf-8')
-                                     for line in info.lines) + '\n\n'
-                    yield NewsItem(title, body, "NNTP NewsGroup "+self.group)
+                    print("articles")
+                    try:
+                        title = decode_header(over['subject'])
+                        resp, info = server.body(id)
+                        body = '\n'.join(line.decode('latin-1')
+                                         for line in info.lines) + '\n\n'
+                        yield NewsItem(title, body, "NNTP NewsGroup "+self.group)
+                    except: pass
                 server.quit()
-                break
+                print("finished")
+                return
             except: continue
-        else:
-            raise self.NewsGroupDoesNotExist(f"Newsgroup {self.group} Does not exist")
+        raise self.NewsGroupDoesNotExist(f"Newsgroup {self.group} Does not exist")
         return []
 
 class FoxNewsSource(WebSourceBase):
